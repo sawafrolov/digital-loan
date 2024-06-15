@@ -32,6 +32,9 @@ dependencies {
     // PostgreSQL
     runtimeOnly(libs.postgresql)
 
+    // Keycloak
+    implementation(libs.keyckoak.admin.client)
+
     // Kafka
     implementation(libs.spring.kafka)
 
