@@ -2,6 +2,9 @@
 kotlin = "1.9.24"
 spring-boot = "3.2.5"
 spring-dependency-management = "1.1.5"
+mapstruct = "1.5.3.Final"
+camunda = "7.20.0"
+springmockk = "4.0.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -13,4 +16,17 @@ spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
 
 [libraries]
-spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter" }
+spring-boot-starter-main = { module = "org.springframework.boot:spring-boot-starter" }
+spring-boot-starter-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-kafka = { module = "org.springframework.kafka:spring-kafka" }
+liquibase-core = { module = "org.liquibase:liquibase-core" }
+postgresql = { module = "org.postgresql:postgresql" }
+
+mapstruct-core = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+camunda-dmn = { module = "org.camunda.bpm.dmn:camunda-engine-dmn", version.ref = "camunda" }
+
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-mockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }

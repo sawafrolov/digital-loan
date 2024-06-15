@@ -19,7 +19,32 @@ springBoot {
 }
 
 dependencies {
-    implementation(libs.spring.boot.starter)
+
+    // Spring Boot
+    implementation(libs.spring.boot.starter.main)
+    implementation(libs.spring.boot.starter.jpa)
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.validation)
+
+    // Liquibase
+    implementation(libs.liquibase.core)
+
+    // PostgreSQL
+    runtimeOnly(libs.postgresql)
+
+    // Kafka
+    implementation(libs.spring.kafka)
+
+    // MapStruct
+    implementation(libs.mapstruct.core)
+    kapt(libs.mapstruct.processor)
+
+    // MapStruct Annotation Processor
+    annotationProcessor(libs.mapstruct.processor)
+
+    // Testing
+    testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.spring.mockk)
 }
 
 tasks.withType<KotlinCompile> {
