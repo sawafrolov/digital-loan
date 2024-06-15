@@ -40,11 +40,11 @@ services:
       KC_FEATURES: preview
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/realms/master" ]
-      interval: 30s
-      retries: 3
-      timeout: 5s
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/realms/master" ]
+#      interval: 30s
+#      retries: 3
+#      timeout: 5s
 
   kafka:
     image: confluentinc/cp-kafka:7.4.4
