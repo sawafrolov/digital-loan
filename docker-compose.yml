@@ -4,6 +4,7 @@ services:
   # Dev Tools
   postgres:
     image: postgres
+    container_name: postgres
     ports:
       - "15432:5432"
     restart: always
@@ -17,37 +18,37 @@ services:
       POSTGRES_PASSWORD: pgadmin
 
   keycloak:
-    image: quay.io/keycloak/keycloak:21.1.0
+    image: quay.io/keycloak/keycloak:25.0.1
+    container_name: keycloak
     depends_on:
       postgres:
         condition: service_healthy
     ports:
-      - "8282:8282"
-    command: [
-      "start",
-      "--auto-build",
-      "--db postgres",
-      "--proxy edge",
-      "--http-enabled true",
-      "--hostname-strict false",
-      "--hostname-strict-https false",
-    ]
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/realms/master" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 3
+      - "8080:8080"
+    command: start-dev
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/realms/master" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     environment:
+      KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: pgadmin
       KC_DB_PASSWORD: pgadmin
-      KC_DB_SCHEMA: public
-      KC_FEATURES: preview
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     ports:
       - "2181:2181"
     healthcheck:
@@ -61,6 +62,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: kafka
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -81,6 +83,7 @@ services:
 
   opensearch:
     image: opensearchproject/opensearch:latest
+    container_name: opensearch
     ports:
       - "9200:9200"
     healthcheck:
@@ -97,11 +100,11 @@ services:
       timeout: 10s
       retries: 24
     environment:
-      - discovery.type=single-node
-      - http.port=9200
-      - bootstrap.memory_lock=true
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=adm-Password0
+      discovery.type: single-node
+      http.port: 9200
+      bootstrap.memory_lock: true
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: osaD1!miN2@
     ulimits:
       memlock:
         soft: -1
@@ -113,28 +116,22 @@ services:
       - opensearch-data:/usr/share/opensearch/data
 
   # Dev Tools UI
-  kafka-ui:
+  kafka_ui:
     image: provectuslabs/kafka-ui:latest
-    ports:
-      - "9090:9090"
+    container_name: kafka-ui
     depends_on:
-      kafka:
-        condition: service_healthy
+      - kafka
+    ports:
+      - "28080:28080"
+    restart: always
     environment:
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092
-      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
-      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry0:8085
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
-      KAFKA_CLUSTERS_1_NAME: secondLocal
-      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka1:29092
-      KAFKA_CLUSTERS_1_METRICS_PORT: 9998
-      KAFKA_CLUSTERS_1_SCHEMAREGISTRY: http://schemaregistry1:8085
-      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
     depends_on:
       opensearch:
         condition: service_healthy
@@ -142,3 +139,6 @@ services:
       - "5601:5601"
     environment:
       OPENSEARCH_HOSTS: '["https://opensearch:9200"]'
+
+volumes:
+  opensearch-data:

@@ -2,7 +2,7 @@
 kotlin = "1.9.24"
 spring-boot = "3.2.5"
 spring-dependency-management = "1.1.5"
-keycloak = "21.1.0"
+keycloak = "25.0.1"
 mapstruct = "1.5.3.Final"
 camunda = "7.20.0"
 springmockk = "4.0.2"
